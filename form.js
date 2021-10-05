@@ -1,68 +1,54 @@
+$(function () {
+  function after_form_submitted(data) {
+    if (data.result == "success") {
+      $("form#reused_form").hide();
+      $("#success_message").show();
+      $("#error_message").hide();
+      $("#messagep").hide();
+    } else {
+      $("#error_message").append("<ul></ul>");
 
-$(function()
-{
-    function after_form_submitted(data) 
-    {
-        if(data.result == 'success')
-        {
-            $('form#reused_form').hide();
-            $('#success_message').show();
-            $('#error_message').hide();
-            $('#messagep').hide();
+      jQuery.each(data.errors, function (key, val) {
+        $("#error_message ul").append("<li>" + key + ":" + val + "</li>");
+      });
+      $("#success_message").hide();
+      $("#error_message").show();
+
+      //reverse the response on the button
+      $('button[type="button"]', $form).each(function () {
+        $btn = $(this);
+        label = $btn.prop("orig_label");
+        if (label) {
+          $btn.prop("type", "submit");
+          $btn.text(label);
+          $btn.prop("orig_label", "");
         }
-        else
-        {
-            $('#error_message').append('<ul></ul>');
+      });
+    } //else
+  }
 
-            jQuery.each(data.errors,function(key,val)
-            {
-                $('#error_message ul').append('<li>'+key+':'+val+'</li>');
-            });
-            $('#success_message').hide();
-            $('#error_message').show();
+  $("#reused_form").submit(function (e) {
+    e.preventDefault();
 
-            //reverse the response on the button
-            $('button[type="button"]', $form).each(function()
-            {
-                $btn = $(this);
-                label = $btn.prop('orig_label');
-                if(label)
-                {
-                    $btn.prop('type','submit' ); 
-                    $btn.text(label);
-                    $btn.prop('orig_label','');
-                }
-            });
-            
-        }//else
-    }
+    $form = $(this);
+    //show some response on the button
+    $('button[type="submit"]', $form).each(function () {
+      $btn = $(this);
+      $btn.prop("type", "button");
+      $btn.prop("orig_label", $btn.text());
+      $btn.text("envoie en cours ...");
+    });
 
-	$('#reused_form').submit(function(e)
-      {
-        e.preventDefault();
-
-        $form = $(this);
-        //show some response on the button
-        $('button[type="submit"]', $form).each(function()
-        {
-            $btn = $(this);
-            $btn.prop('type','button' ); 
-            $btn.prop('orig_label',$btn.text());
-            $btn.text('envoie en cours ...');
-        });
-        
-
-                    var formdata = new FormData(this);
-            $.ajax({
-                type: "POST",
-                url: 'handler.php',
-                data: formdata,
-                success: after_form_submitted,
-                dataType: 'json' ,
-                processData: false,
-                contentType: false,
-                cache: false        
-            });
-        
-      });	
+    var formdata = new FormData(this);
+    $.ajax({
+      type: "POST",
+      url: "https://recrutement-mmv.fr/wp-content/themes/jobseek-child/handler.php",
+      data: formdata,
+      success: after_form_submitted,
+      dataType: "json",
+      processData: false,
+      contentType: false,
+      cache: false,
+    });
+  });
 });

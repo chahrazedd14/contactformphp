@@ -35,19 +35,22 @@ class FormHandler
 	private $attachments;
 	private $recaptcha;
 
-	public function __construct()
+	public function __construct($Title)
 	{
 		$this->emails = array();
 		$this->validator = FormValidator::create();
 		$this->mailer = new PHPMailer;
 		$this->mail_template='';
 
-		$this->mailer->Subject = "MMv rcrurement  ";
+		$this->mailer->Subject = 'Candidature  '.$Title;
 
 		$host = isset($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:'localhost';
-        $from_email ='forms@'.$host;
-   		$this->mailer->setFrom($from_email,'candidature envoyée ',false);  
+        $from_email ='De@'.$host;
+   		$this->mailer->setFrom($from_email,' MMv recrutement ',false);  
 
+
+		 $this->mailer->CharSet = 'UTF-8';
+  
    		$this->captcha = false;   
 
    		$this->attachments = [];
@@ -56,7 +59,7 @@ class FormHandler
 
 
 	}
-
+		
 	/**
 	 * sendEmailTo: add a recipient email address
 	 * @param  string/array $email_s one or more emails. If more than one emails, pass the emails as array
@@ -258,7 +261,7 @@ class FormHandler
 
 	private function compose_mail($post)
 	{
-		$content = "rECRUTEMENT : \n\n";
+		$content = "Information de candidat : \n\n";
 		foreach($post as $name=>$value)
 		{
 			$content .= ucwords($name).":\n";
